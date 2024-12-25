@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { GearList } from "./GearList";
 import { PackingLists } from "./PackingLists";
 import { Settings } from "./Settings";
+import { Account } from "./Account";
 
 export function DashboardContent() {
   return (
@@ -9,6 +10,7 @@ export function DashboardContent() {
       <Routes>
         <Route path="/gear" element={<GearList />} />
         <Route path="/lists" element={<PackingLists />} />
+        <Route path="/account" element={<Account />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </main>

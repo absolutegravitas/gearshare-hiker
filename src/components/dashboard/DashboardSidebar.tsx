@@ -9,12 +9,13 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Backpack, List, Settings, LogOut } from "lucide-react";
+import { Backpack, List, Settings, LogOut, User } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const menuItems = [
   { title: "My Gear", icon: Backpack, url: "/dashboard/gear" },
   { title: "Packing Lists", icon: List, url: "/dashboard/lists" },
+  { title: "Account", icon: User, url: "/dashboard/account" },
   { title: "Settings", icon: Settings, url: "/dashboard/settings" },
 ];
 
