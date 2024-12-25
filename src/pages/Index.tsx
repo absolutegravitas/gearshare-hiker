@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { Mountains } from "lucide-react";
+import { Mountain } from "lucide-react";
 
 const Index = () => {
   const [email, setEmail] = useState("");
@@ -26,7 +26,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-16">
         <nav className="flex justify-between items-center mb-16">
           <div className="flex items-center space-x-2 text-white">
-            <Mountains className="h-8 w-8" />
+            <Mountain className="h-8 w-8" />
             <span className="text-2xl font-bold">TrailKit</span>
           </div>
           <div className="space-x-4">

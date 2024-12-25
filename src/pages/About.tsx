@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mountains } from "lucide-react";
+import { Mountain } from "lucide-react";
 
 const About = () => {
   return (
@@ -7,7 +7,7 @@ const About = () => {
       <div className="container mx-auto px-4 py-16">
         <nav className="flex justify-between items-center mb-16">
           <Link to="/" className="flex items-center space-x-2 text-white">
-            <Mountains className="h-8 w-8" />
+            <Mountain className="h-8 w-8" />
             <span className="text-2xl font-bold">TrailKit</span>
           </Link>
           <div className="space-x-4">
