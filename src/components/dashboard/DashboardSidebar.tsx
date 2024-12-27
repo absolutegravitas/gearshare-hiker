@@ -24,20 +24,22 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Mobile Menu Trigger - Always visible on mobile */}
-      <Button
-        variant="ghost"
-        size="icon"
-        className="fixed top-4 left-4 z-50 md:hidden"
-        asChild
-      >
-        <SidebarTrigger>
-          <Menu className="h-6 w-6" />
-        </SidebarTrigger>
-      </Button>
+      <div className="fixed top-0 left-0 right-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 md:hidden">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-4 left-4 z-50 md:hidden"
+          asChild
+        >
+          <SidebarTrigger>
+            <Menu className="h-6 w-6" />
+          </SidebarTrigger>
+        </Button>
+      </div>
 
       <Sidebar>
-        <SidebarContent>
-          <div className="flex items-center justify-between px-4 py-2">
+        <SidebarContent className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+          <div className="flex items-center justify-between px-4 py-2 mt-14 md:mt-0">
             <h2 className="text-xl font-bold text-forest">Trail Gear</h2>
             <div className="hidden md:block">
               <SidebarTrigger />
