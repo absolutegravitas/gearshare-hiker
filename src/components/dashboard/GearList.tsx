@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { WeightSummaryChart } from "./WeightSummaryChart";
 
 interface GearItem {
   id: number;
@@ -18,6 +19,9 @@ export function GearList() {
     { id: 1, name: "Tent", weight: "2.5 kg", category: "Shelter" },
     { id: 2, name: "Sleeping Bag", weight: "1.2 kg", category: "Sleep System" },
     { id: 3, name: "Backpack", weight: "1.8 kg", category: "Carrying" },
+    { id: 4, name: "Stove", weight: "0.4 kg", category: "Cooking" },
+    { id: 5, name: "Water Filter", weight: "0.2 kg", category: "Water" },
+    { id: 6, name: "First Aid Kit", weight: "0.5 kg", category: "Safety" },
   ]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<GearItem>({
@@ -71,6 +75,8 @@ export function GearList() {
           Add Gear
         </Button>
       </div>
+
+      <WeightSummaryChart gear={gear} />
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {gear.map((item) => (
