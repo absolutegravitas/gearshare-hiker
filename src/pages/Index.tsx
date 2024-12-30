@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { Mountain, Download } from "lucide-react";
+import { DashboardPreview } from "@/components/DashboardPreview";
 
 const Index = () => {
   const [email, setEmail] = useState("");
@@ -18,7 +19,6 @@ const Index = () => {
       setIsInstallable(true);
     });
 
-    // Check if running on iOS in standalone mode
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
     
@@ -29,7 +29,6 @@ const Index = () => {
 
   const handleInstall = async () => {
     if (deferredPrompt) {
-      // Android installation
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
@@ -37,7 +36,6 @@ const Index = () => {
         setIsInstallable(false);
       }
     } else {
-      // iOS installation instructions
       toast({
         title: "Install Instructions",
         description: "To install, tap the share button and select 'Add to Home Screen'",
@@ -107,11 +105,7 @@ const Index = () => {
             </form>
           </div>
           <div className="lg:w-1/2 animate-float">
-            <img
-              src="/placeholder.svg"
-              alt="Hiking Gear Illustration"
-              className="w-full max-w-lg mx-auto"
-            />
+            <DashboardPreview />
           </div>
         </div>
 
