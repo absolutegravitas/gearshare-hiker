@@ -3,8 +3,9 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { Mountain, Download } from "lucide-react";
+import { Mountain, Download, List, Package, Share } from "lucide-react";
 import { DashboardPreview } from "@/components/DashboardPreview";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   const [email, setEmail] = useState("");
@@ -55,33 +56,36 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-forest to-forest-light">
-      <div className="container mx-auto px-4 py-16">
-        <nav className="flex justify-between items-center mb-16">
-          <div className="flex items-center space-x-2 text-white">
-            <Mountain className="h-8 w-8" />
-            <span className="text-2xl font-bold">TrailKit</span>
-          </div>
-          <div className="space-x-4">
-            {isInstallable && (
-              <Button
-                onClick={handleInstall}
-                variant="outline"
-                className="bg-white/10 text-white border-white/20 hover:bg-white/20"
-              >
-                <Download className="mr-2 h-4 w-4" />
-                Install App
-              </Button>
-            )}
-            <Link to="/about" className="text-white hover:text-sky-light">
-              About
-            </Link>
-            <Link to="/login" className="text-white hover:text-sky-light">
-              Login
-            </Link>
-          </div>
-        </nav>
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-forest to-forest-light">
+      <nav className="flex justify-between items-center px-4 py-6">
+        <div className="flex items-center space-x-2 text-white">
+          <Mountain className="h-8 w-8" />
+          <span className="text-2xl font-bold">TrailKit</span>
+        </div>
+        <div className="space-x-4">
+          {isInstallable && (
+            <Button
+              onClick={handleInstall}
+              variant="outline"
+              className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Install App
+            </Button>
+          )}
+          <Link to="/about" className="text-white hover:text-sky-light">
+            About
+          </Link>
+          <Link to="/pricing" className="text-white hover:text-sky-light">
+            Pricing
+          </Link>
+          <Link to="/login" className="text-white hover:text-sky-light">
+            Login
+          </Link>
+        </div>
+      </nav>
 
+      <div className="container mx-auto px-4 py-16">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
           <div className="lg:w-1/2 text-white">
             <h1 className="text-5xl font-bold mb-6">
@@ -109,6 +113,44 @@ const Index = () => {
           </div>
         </div>
 
+        {/* How it Works Section */}
+        <div className="mt-24 mb-16">
+          <h2 className="text-3xl font-bold text-white text-center mb-12">
+            How TrailKit Works
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg text-white text-center">
+              <div className="bg-sky/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Package className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Track Your Gear</h3>
+              <p className="text-white/80">
+                Add and organize all your hiking equipment in one place. Keep track of weights, maintenance, and details.
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg text-white text-center">
+              <div className="bg-sky/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                <List className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Create Lists</h3>
+              <p className="text-white/80">
+                Build custom packing lists for different types of hikes. Calculate total weight and never forget essentials.
+              </p>
+            </div>
+            
+            <div className="bg-white/10 backdrop-blur-sm p-8 rounded-lg text-white text-center">
+              <div className="bg-sky/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Share className="h-8 w-8" />
+              </div>
+              <h3 className="text-xl font-bold mb-4">Share & Learn</h3>
+              <p className="text-white/80">
+                Share your lists with fellow hikers, discover new gear combinations, and learn from the community.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="mt-24 grid md:grid-cols-3 gap-8 text-white">
           <div className="bg-white/10 p-6 rounded-lg">
             <h3 className="text-xl font-bold mb-4">Gear Management</h3>
@@ -124,6 +166,7 @@ const Index = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
