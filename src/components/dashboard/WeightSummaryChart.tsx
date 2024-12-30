@@ -31,6 +31,7 @@ const COLORS = ['#2D5A27', '#8B7355', '#75A5B7', '#3B7A35', '#A68E6A', '#9DBFCD'
 
 export function WeightSummaryChart({ gear }: WeightSummaryChartProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const parseWeight = (weight: string): number => {
     const numericWeight = parseFloat(weight.replace(/[^\d.-]/g, ''));
@@ -43,9 +44,18 @@ export function WeightSummaryChart({ gear }: WeightSummaryChartProps) {
     return acc;
   }, {});
 
+  const itemsByCategory = gear.reduce((acc: { [key: string]: GearItem[] }, item) => {
+    if (!acc[item.category]) {
+      acc[item.category] = [];
+    }
+    acc[item.category].push(item);
+    return acc;
+  }, {});
+
   const pieData = Object.entries(categoryData).map(([name, value]) => ({
     name,
     value,
+    items: itemsByCategory[name],
   }));
 
   const detailedData = gear.map(item => ({
@@ -56,6 +66,36 @@ export function WeightSummaryChart({ gear }: WeightSummaryChartProps) {
   }));
 
   const totalWeight = Object.values(categoryData).reduce((a, b) => a + b, 0);
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length > 0) {
+      const data = payload[0].payload;
+      const categoryItems = data.items || [];
+      const categoryTotal = data.value;
+
+      return (
+        <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+          <p className="font-bold mb-2">{data.name}</p>
+          <p className="text-sm text-gray-600">Total: {categoryTotal.toFixed(2)} kg</p>
+          {categoryItems.length > 0 && (
+            <div className="mt-2 border-t pt-2">
+              {categoryItems.map((item: GearItem) => {
+                const itemWeight = parseWeight(item.weight);
+                const percentage = (itemWeight / categoryTotal * 100).toFixed(1);
+                return (
+                  <div key={item.id} className="text-sm">
+                    <span className="font-medium">{item.name}:</span>
+                    <span className="text-gray-600"> {itemWeight.toFixed(2)} kg ({percentage}%)</span>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <Card className="w-full mb-6">
@@ -83,14 +123,13 @@ export function WeightSummaryChart({ gear }: WeightSummaryChartProps) {
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
+                  onClick={(data) => setSelectedCategory(data.name)}
                 >
                   {pieData.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip
-                  formatter={(value: number) => [`${value.toFixed(2)} kg`, 'Weight']}
-                />
+                <Tooltip content={<CustomTooltip />} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
