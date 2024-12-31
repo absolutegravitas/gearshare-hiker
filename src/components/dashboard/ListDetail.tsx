@@ -75,16 +75,22 @@ export function ListDetail() {
     );
     if (!gearItem) return;
 
+    // Create new item with quantity
     const newItem: ListItem = {
       ...gearItem,
       quantity,
     };
 
-    setList({
+    // Update list with new item
+    const updatedList = {
       ...list,
       items: [...list.items, newItem],
-    });
+    };
 
+    // Update state with new list
+    setList(updatedList);
+
+    // Reset selection and quantity
     setSelectedGearId("");
     setQuantity(1);
 
@@ -99,7 +105,7 @@ export function ListDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Button variant="ghost" onClick={() => navigate("/lists")}>
+        <Button variant="ghost" onClick={() => navigate("/dashboard/lists")}>
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Lists
         </Button>
