@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Trash2, ArrowRight } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 interface PackingList {
@@ -13,6 +14,7 @@ interface PackingList {
 }
 
 export function PackingLists() {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [lists, setLists] = useState<PackingList[]>([
     { id: 1, name: "Weekend Camping", items: 12, totalWeight: "8.5 kg" },
@@ -74,7 +76,7 @@ export function PackingLists() {
       
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {lists.map((list) => (
-          <Card key={list.id}>
+          <Card key={list.id} className="relative">
             <CardHeader>
               <CardTitle className="text-lg flex justify-between items-center">
                 {editingId === list.id ? (
@@ -94,21 +96,23 @@ export function PackingLists() {
                       Save
                     </Button>
                   ) : (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleEdit(list)}
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </Button>
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEdit(list)}
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(list.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </>
                   )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleDelete(list.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
                 </div>
               </CardTitle>
             </CardHeader>
@@ -140,6 +144,14 @@ export function PackingLists() {
                   <p className="text-sm text-gray-500">
                     Total Weight: {list.totalWeight}
                   </p>
+                  <Button
+                    variant="ghost"
+                    className="absolute bottom-4 right-4"
+                    onClick={() => navigate(`/lists/${list.id}`)}
+                  >
+                    View Details
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </>
               )}
             </CardContent>
