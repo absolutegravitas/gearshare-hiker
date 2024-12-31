@@ -36,22 +36,23 @@ export function ListDetail() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [list, setList] = useState<PackingList | null>(null);
-  const [availableGear, setAvailableGear] = useState<GearItem[]>([]);
+  const [availableGear, setAvailableGear] = useState<GearItem[]>([
+    { id: 1, name: "Tent", weight: "2.5 kg", category: "Shelter" },
+    { id: 2, name: "Sleeping Bag", weight: "1.2 kg", category: "Sleep System" },
+    { id: 3, name: "Backpack", weight: "1.8 kg", category: "Carrying" },
+  ]);
   const [selectedGearId, setSelectedGearId] = useState<string>("");
   const [quantity, setQuantity] = useState<number>(1);
 
-  // Mock data - in a real app, this would come from a database
+  // Mock data - in a real app, this would come from an API
   useEffect(() => {
-    setAvailableGear([
-      { id: 1, name: "Tent", weight: "2.5 kg", category: "Shelter" },
-      { id: 2, name: "Sleeping Bag", weight: "1.2 kg", category: "Sleep System" },
-      { id: 3, name: "Backpack", weight: "1.8 kg", category: "Carrying" },
-    ]);
-
     setList({
       id: Number(id),
       name: "Weekend Camping",
-      items: [],
+      items: [
+        { id: 1, name: "Tent", weight: "2.5 kg", category: "Shelter", quantity: 1 },
+        { id: 2, name: "Sleeping Bag", weight: "1.2 kg", category: "Sleep System", quantity: 1 },
+      ],
     });
   }, [id]);
 
@@ -166,6 +167,10 @@ export function ListDetail() {
             </CardContent>
           </Card>
         ))}
+      </div>
+
+      <div className="text-sm text-muted-foreground mt-4">
+        Total List Weight: {calculateTotalWeight(list.items)}
       </div>
     </div>
   );
