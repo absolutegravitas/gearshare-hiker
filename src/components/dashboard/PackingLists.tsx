@@ -147,7 +147,7 @@ export function PackingLists() {
                   <Button
                     variant="ghost"
                     className="absolute bottom-4 right-4"
-                    onClick={() => navigate(`/lists/${list.id}`)}
+                    onClick={() => navigate(`/dashboard/lists/${list.id}`)}
                   >
                     View Details
                     <ArrowRight className="ml-2 h-4 w-4" />
