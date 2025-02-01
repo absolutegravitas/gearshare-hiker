@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import Pricing from "./pages/Pricing";
 import FeatureRequests from "./pages/FeatureRequests";
 import { Footer } from "./components/Footer";
+import { MainNav } from "./components/MainNav";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <MainNav />
           <div className="flex-grow">
             <Routes>
               <Route path="/" element={<Index />} />
