@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
-import { Mountain, Download, List, Package, Share } from "lucide-react";
+import { Mountain, Download, List, Package, Share, MessageSquare } from "lucide-react";
 import { DashboardPreview } from "@/components/DashboardPreview";
 import { Footer } from "@/components/Footer";
 
@@ -73,6 +73,10 @@ const Index = () => {
               Install App
             </Button>
           )}
+          <Link to="/features" className="text-white hover:text-sky-light">
+            <MessageSquare className="inline-block mr-1 h-4 w-4" />
+            Feature Requests
+          </Link>
           <Link to="/about" className="text-white hover:text-sky-light">
             About
           </Link>
