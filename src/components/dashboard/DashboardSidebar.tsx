@@ -10,13 +10,14 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Backpack, List, Settings, LogOut, User, Menu } from "lucide-react";
+import { Backpack, List, Settings, LogOut, User, Menu, MessageSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "My Gear", icon: Backpack, url: "/dashboard/gear" },
   { title: "Packing Lists", icon: List, url: "/dashboard/lists" },
+  { title: "Feature Requests", icon: MessageSquare, url: "/features" },
   { title: "Account", icon: User, url: "/dashboard/account" },
   { title: "Settings", icon: Settings, url: "/dashboard/settings" },
 ];
