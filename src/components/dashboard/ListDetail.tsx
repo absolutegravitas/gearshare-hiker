@@ -13,6 +13,7 @@ import {
 import { Plus, ArrowLeft } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { WeightSummaryChart } from "./WeightSummaryChart";
+import { BackpackVisualization } from './BackpackVisualization';
 
 interface GearItem {
   id: number;
@@ -112,67 +113,75 @@ export function ListDetail() {
         <h1 className="text-2xl font-bold text-gray-900">{list.name}</h1>
       </div>
 
-      {list.items.length > 0 && <WeightSummaryChart gear={list.items} />}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-6">
+          {list.items.length > 0 && <WeightSummaryChart gear={list.items} />}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Add Gear</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4">
-            <Select
-              value={selectedGearId}
-              onValueChange={setSelectedGearId}
-            >
-              <SelectTrigger className="w-[300px]">
-                <SelectValue placeholder="Select gear to add" />
-              </SelectTrigger>
-              <SelectContent>
-                {availableGear.map((gear) => (
-                  <SelectItem key={gear.id} value={gear.id.toString()}>
-                    {gear.name} ({gear.weight})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Input
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="w-24"
-              placeholder="Qty"
-            />
-            <Button onClick={handleAddItem}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {list.items.map((item) => (
-          <Card key={item.id}>
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg">{item.name}</CardTitle>
+              <CardTitle>Add Gear</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-gray-500">
-                Quantity: {item.quantity}
-              </p>
-              <p className="text-sm text-gray-500">
-                Weight per item: {item.weight}
-              </p>
-              <p className="text-sm text-gray-500">
-                Total weight: {(parseWeight(item.weight) * item.quantity).toFixed(2)} kg
-              </p>
-              <p className="text-sm text-gray-500">
-                Category: {item.category}
-              </p>
+              <div className="flex gap-4">
+                <Select
+                  value={selectedGearId}
+                  onValueChange={setSelectedGearId}
+                >
+                  <SelectTrigger className="w-[300px]">
+                    <SelectValue placeholder="Select gear to add" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableGear.map((gear) => (
+                      <SelectItem key={gear.id} value={gear.id.toString()}>
+                        {gear.name} ({gear.weight})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  type="number"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className="w-24"
+                  placeholder="Qty"
+                />
+                <Button onClick={handleAddItem}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add
+                </Button>
+              </div>
             </CardContent>
           </Card>
-        ))}
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {list.items.map((item) => (
+              <Card key={item.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{item.name}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-gray-500">
+                    Quantity: {item.quantity}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Weight per item: {item.weight}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Total weight: {(parseWeight(item.weight) * item.quantity).toFixed(2)} kg
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Category: {item.category}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        <div className="sticky top-6">
+          <BackpackVisualization items={list.items} />
+        </div>
       </div>
 
       <div className="text-sm text-muted-foreground mt-4">
