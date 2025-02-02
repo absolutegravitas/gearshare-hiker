@@ -22,7 +22,11 @@ interface GearItem {
   category: string;
 }
 
-interface ListItem extends GearItem {
+export interface ListItem {
+  id: number;
+  name: string;
+  weight: string;
+  category: string;
   quantity: number;
 }
 
