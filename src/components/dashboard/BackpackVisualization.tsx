@@ -26,65 +26,95 @@ export function BackpackVisualization({ items }: BackpackVisualizationProps) {
 
   return (
     <div className="relative w-full max-w-md mx-auto h-[600px]">
-      {/* Backpack outline */}
       <svg
         viewBox="0 0 300 400"
         className="w-full h-full"
         style={{ filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))' }}
       >
-        {/* Main backpack body */}
+        {/* Main backpack body - more detailed shape */}
         <path
-          d="M50 100 L250 100 L270 350 L30 350 Z"
-          fill="#403E43"
-          stroke="#222222"
-          strokeWidth="2"
-        />
-        {/* Top lid */}
-        <path
-          d="M40 100 C40 60 260 60 260 100"
+          d="M60 100 
+             C60 80 240 80 240 100
+             L260 320 
+             C260 350 40 350 40 320 
+             Z"
           fill="#403E43"
           stroke="#222222"
           strokeWidth="2"
         />
         
+        {/* Top lid with curve */}
+        <path
+          d="M50 100 
+             C50 60 250 60 250 100"
+          fill="#403E43"
+          stroke="#222222"
+          strokeWidth="2"
+        />
+
+        {/* Side pockets */}
+        <path d="M40 200 L30 250 L40 300 L60 300 L60 200 Z" 
+              fill="#363438" stroke="#222222" strokeWidth="1" />
+        <path d="M260 200 L270 250 L260 300 L240 300 L240 200 Z" 
+              fill="#363438" stroke="#222222" strokeWidth="1" />
+        
         {/* Render gear items */}
         {items.map((item, index) => {
-          const yOffset = 120 + (index * 50); // Stack items vertically
-          const itemWidth = 200;
-          const itemHeight = 40;
+          const yOffset = 120 + (index * 45);
+          const xCenter = 150;
           
           // Different SVG shapes based on item category
           let itemPath = '';
+          let itemWidth = 160;
+          let itemHeight = 35;
+          
           switch (item.category.toLowerCase()) {
             case 'shelter':
-              // Triangular shape for tent
-              itemPath = `M${150 - itemWidth/2} ${yOffset + itemHeight} 
-                         L${150} ${yOffset} 
-                         L${150 + itemWidth/2} ${yOffset + itemHeight}`;
+              // A-frame tent shape
+              itemPath = `M${xCenter - itemWidth/2} ${yOffset + itemHeight}
+                         L${xCenter} ${yOffset}
+                         L${xCenter + itemWidth/2} ${yOffset + itemHeight}
+                         L${xCenter + itemWidth/3} ${yOffset + itemHeight}
+                         L${xCenter + itemWidth/3} ${yOffset + itemHeight * 1.2}
+                         L${xCenter - itemWidth/3} ${yOffset + itemHeight * 1.2}
+                         L${xCenter - itemWidth/3} ${yOffset + itemHeight}
+                         Z`;
               break;
+              
             case 'sleep system':
-              // Rolled shape for sleeping bag/mat
-              itemPath = `M${150 - itemWidth/2} ${yOffset} 
-                         Q${150} ${yOffset - 20} ${150 + itemWidth/2} ${yOffset}`;
+              // Rolled sleeping bag with curves
+              const radius = itemHeight / 2;
+              itemPath = `M${xCenter - itemWidth/2} ${yOffset + radius}
+                         A${radius} ${radius} 0 0 1 ${xCenter - itemWidth/2} ${yOffset - radius}
+                         L${xCenter + itemWidth/2} ${yOffset - radius}
+                         A${radius} ${radius} 0 0 1 ${xCenter + itemWidth/2} ${yOffset + radius}
+                         L${xCenter - itemWidth/2} ${yOffset + radius}
+                         Z`;
               break;
+              
             case 'cooking':
-              // Pot-like shape for cook kit
-              itemPath = `M${150 - itemWidth/3} ${yOffset} 
-                         L${150 + itemWidth/3} ${yOffset} 
-                         L${150 + itemWidth/4} ${yOffset + itemHeight} 
-                         L${150 - itemWidth/4} ${yOffset + itemHeight}`;
+              // Pot shape with handle
+              itemPath = `M${xCenter - itemWidth/3} ${yOffset}
+                         L${xCenter + itemWidth/3} ${yOffset}
+                         L${xCenter + itemWidth/4} ${yOffset + itemHeight}
+                         L${xCenter - itemWidth/4} ${yOffset + itemHeight}
+                         Z
+                         M${xCenter + itemWidth/3} ${yOffset + itemHeight/3}
+                         L${xCenter + itemWidth/2} ${yOffset + itemHeight/3}`;
               break;
+              
             default:
-              // Rectangle for other items
-              itemPath = `M${150 - itemWidth/2} ${yOffset} 
-                         L${150 + itemWidth/2} ${yOffset} 
-                         L${150 + itemWidth/2} ${yOffset + itemHeight} 
-                         L${150 - itemWidth/2} ${yOffset + itemHeight}`;
+              // Generic rounded rectangle for other items
+              itemPath = `M${xCenter - itemWidth/2} ${yOffset}
+                         L${xCenter + itemWidth/2} ${yOffset}
+                         L${xCenter + itemWidth/2} ${yOffset + itemHeight}
+                         L${xCenter - itemWidth/2} ${yOffset + itemHeight}
+                         Z`;
           }
 
           return (
             <g
-              key={item.id}
+              key={`${item.id}-${index}`}
               className="transition-opacity hover:opacity-80 cursor-pointer"
               onClick={() => {
                 toast({
@@ -100,12 +130,13 @@ export function BackpackVisualization({ items }: BackpackVisualizationProps) {
                 strokeWidth="1"
               />
               <text
-                x="150"
+                x={xCenter}
                 y={yOffset + itemHeight/2}
                 textAnchor="middle"
                 fill="white"
                 fontSize="12"
-                className="pointer-events-none"
+                dominantBaseline="middle"
+                className="pointer-events-none select-none"
               >
                 {item.name}
               </text>
