@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Github, Google } from "lucide-react";
+import { Mail, Github } from "lucide-react";
 
 const Waitlist = () => {
   const { toast } = useToast();
@@ -90,10 +90,10 @@ const Waitlist = () => {
                 type="button"
                 variant="outline"
                 className="w-full"
-                onClick={() => handleSocialSignup("Google")}
+                onClick={() => handleSocialSignup("Email")}
               >
-                <Google className="mr-2 h-4 w-4" />
-                Continue with Google
+                <Mail className="mr-2 h-4 w-4" />
+                Continue with Email
               </Button>
               <Button
                 type="button"
