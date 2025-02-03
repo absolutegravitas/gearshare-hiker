@@ -102,16 +102,19 @@ class StorageManager {
       const tx = this.db.transaction(this.SYNC_STORE, 'readwrite');
       const store = tx.objectStore(this.SYNC_STORE);
       const items = await store.getAll();
+      const keys = await store.getAllKeys();
 
-      for (const item of items) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i];
+        const key = keys[i];
         try {
           await this.syncWithRedis(item);
-          await store.delete(item.key);
+          await store.delete(key);
         } catch (error) {
           console.error('Failed to sync item:', error);
           // Leave failed items in queue for retry
           if ((item.data?.retryCount ?? 0) >= 3) {
-            await store.delete(item.key);
+            await store.delete(key);
           }
         }
       }
