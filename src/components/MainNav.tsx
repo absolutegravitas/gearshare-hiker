@@ -42,10 +42,10 @@ export const MainNav = () => {
 
   return (
     <nav className="flex justify-between items-center px-4 py-6 bg-gradient-to-b from-forest to-forest-light">
-      <div className="flex items-center space-x-2 text-white">
+      <Link to="/" className="flex items-center space-x-2 text-white hover:text-sky-light transition-colors">
         <Mountain className="h-8 w-8" />
         <span className="text-2xl font-bold">TrailKit</span>
-      </div>
+      </Link>
       <div className="space-x-4">
         {isInstallable && (
           <Button
