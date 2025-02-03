@@ -1,4 +1,4 @@
-import { openDB, DBSchema, IDBPDatabase } from 'idb';
+import Dexie, { Table } from 'dexie';
 
 interface GearItem {
   id: number;
@@ -8,52 +8,47 @@ interface GearItem {
 }
 
 interface SyncQueueItem {
+  id?: number;
   action: 'create' | 'update' | 'delete';
   data: any;
   timestamp: number;
+  retryCount?: number;
 }
 
-interface GearDB extends DBSchema {
-  gearList: {
-    key: string;
-    value: GearItem[];
-  };
-  syncQueue: {
-    key: number;
-    value: SyncQueueItem;
-  };
+class GearDatabase extends Dexie {
+  gearList!: Table<GearItem[], string>; // userId is the key
+  syncQueue!: Table<SyncQueueItem>;
+
+  constructor() {
+    super('gearTracker');
+    this.version(1).stores({
+      gearList: 'userId',
+      syncQueue: '++id, action, timestamp'
+    });
+  }
 }
+
+const db = new GearDatabase();
 
 class StorageManager {
-  private db: IDBPDatabase<GearDB> | null = null;
-  private readonly DB_NAME = 'gearTracker';
-  private readonly STORE_NAME = 'gearList';
-  private readonly SYNC_STORE = 'syncQueue';
   private readonly LS_BACKUP_KEY = 'gearList_backup';
 
   async initialize() {
     try {
-      this.db = await openDB<GearDB>(this.DB_NAME, 1, {
-        upgrade(db) {
-          db.createObjectStore('gearList');
-          db.createObjectStore('syncQueue', { autoIncrement: true });
-        },
-      });
+      await db.open();
       console.log('IndexedDB initialized');
     } catch (error) {
       console.error('Failed to initialize IndexedDB:', error);
       // Fall back to localStorage
-      this.db = null;
     }
   }
 
   async saveGearList(userId: string, gearList: GearItem[]) {
     try {
-      if (this.db) {
-        await this.db.put(this.STORE_NAME, gearList, userId);
-        // Queue sync operation
-        await this.queueSync('update', { userId, gearList });
-      }
+      await db.gearList.put(gearList, userId);
+      // Queue sync operation
+      await this.queueSync('update', { userId, gearList });
+      
       // Backup to localStorage
       localStorage.setItem(
         `${this.LS_BACKUP_KEY}_${userId}`,
@@ -67,10 +62,9 @@ class StorageManager {
 
   async getGearList(userId: string): Promise<GearItem[]> {
     try {
-      if (this.db) {
-        const list = await this.db.get(this.STORE_NAME, userId);
-        if (list) return list;
-      }
+      const list = await db.gearList.get(userId);
+      if (list) return list;
+
       // Fall back to localStorage
       const backup = localStorage.getItem(`${this.LS_BACKUP_KEY}_${userId}`);
       return backup ? JSON.parse(backup) : [];
@@ -81,13 +75,12 @@ class StorageManager {
   }
 
   private async queueSync(action: 'create' | 'update' | 'delete', data: any) {
-    if (!this.db) return;
-
     try {
-      await this.db.add(this.SYNC_STORE, {
+      await db.syncQueue.add({
         action,
         data,
         timestamp: Date.now(),
+        retryCount: 0
       });
       await this.processSyncQueue();
     } catch (error) {
@@ -96,25 +89,22 @@ class StorageManager {
   }
 
   private async processSyncQueue() {
-    if (!this.db) return;
-
     try {
-      const tx = this.db.transaction(this.SYNC_STORE, 'readwrite');
-      const store = tx.objectStore(this.SYNC_STORE);
-      const items = await store.getAll();
-      const keys = await store.getAllKeys();
+      const items = await db.syncQueue.toArray();
 
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
-        const key = keys[i];
+      for (const item of items) {
         try {
           await this.syncWithRedis(item);
-          await store.delete(key);
+          await db.syncQueue.delete(item.id!);
         } catch (error) {
           console.error('Failed to sync item:', error);
           // Leave failed items in queue for retry
-          if ((item.data?.retryCount ?? 0) >= 3) {
-            await store.delete(key);
+          if ((item.retryCount ?? 0) >= 3) {
+            await db.syncQueue.delete(item.id!);
+          } else {
+            await db.syncQueue.update(item.id!, {
+              retryCount: (item.retryCount ?? 0) + 1
+            });
           }
         }
       }
