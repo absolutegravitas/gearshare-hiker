@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Plus, Edit2, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { WeightSummaryChart } from "./WeightSummaryChart";
+import { storageManager } from "@/utils/storage";
 
 interface GearItem {
   id: number;
@@ -15,14 +16,7 @@ interface GearItem {
 
 export function GearList() {
   const { toast } = useToast();
-  const [gear, setGear] = useState<GearItem[]>([
-    { id: 1, name: "Tent", weight: "2.5 kg", category: "Shelter" },
-    { id: 2, name: "Sleeping Bag", weight: "1.2 kg", category: "Sleep System" },
-    { id: 3, name: "Backpack", weight: "1.8 kg", category: "Carrying" },
-    { id: 4, name: "Stove", weight: "0.4 kg", category: "Cooking" },
-    { id: 5, name: "Water Filter", weight: "0.2 kg", category: "Water" },
-    { id: 6, name: "First Aid Kit", weight: "0.5 kg", category: "Safety" },
-  ]);
+  const [gear, setGear] = useState<GearItem[]>([]);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<GearItem>({
     id: 0,
@@ -30,6 +24,36 @@ export function GearList() {
     weight: "",
     category: "",
   });
+
+  useEffect(() => {
+    const initializeStorage = async () => {
+      await storageManager.initialize();
+      // For demo, using a fixed user ID - in production this would come from auth
+      const savedGear = await storageManager.getGearList('demo-user');
+      if (savedGear.length > 0) {
+        setGear(savedGear);
+      }
+    };
+    initializeStorage();
+  }, []);
+
+  useEffect(() => {
+    const saveGear = async () => {
+      try {
+        await storageManager.saveGearList('demo-user', gear);
+      } catch (error) {
+        console.error('Failed to save gear:', error);
+        toast({
+          title: "Sync Error",
+          description: "Your changes will be saved when connection is restored.",
+        });
+      }
+    };
+    
+    if (gear.length > 0) {
+      saveGear();
+    }
+  }, [gear, toast]);
 
   const handleEdit = (item: GearItem) => {
     setEditingId(item.id);
