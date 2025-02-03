@@ -7,6 +7,12 @@ interface GearItem {
   category: string;
 }
 
+interface SyncQueueItem {
+  action: 'create' | 'update' | 'delete';
+  data: any;
+  timestamp: number;
+}
+
 interface GearDB extends DBSchema {
   gearList: {
     key: string;
@@ -14,11 +20,7 @@ interface GearDB extends DBSchema {
   };
   syncQueue: {
     key: number;
-    value: {
-      action: 'create' | 'update' | 'delete';
-      data: any;
-      timestamp: number;
-    };
+    value: SyncQueueItem;
   };
 }
 
@@ -103,12 +105,12 @@ class StorageManager {
 
       for (const item of items) {
         try {
-          await this.syncWithRedis(item.value);
+          await this.syncWithRedis(item);
           await store.delete(item.key);
         } catch (error) {
           console.error('Failed to sync item:', error);
           // Leave failed items in queue for retry
-          if (item.value.retryCount >= 3) {
+          if ((item.data?.retryCount ?? 0) >= 3) {
             await store.delete(item.key);
           }
         }
@@ -118,7 +120,7 @@ class StorageManager {
     }
   }
 
-  private async syncWithRedis(syncItem: { action: string; data: any }) {
+  private async syncWithRedis(syncItem: SyncQueueItem) {
     // Assuming REDIS_URL is available in ENV
     const REDIS_URL = process.env.REDIS_URL;
     if (!REDIS_URL) {
