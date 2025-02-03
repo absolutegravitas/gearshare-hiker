@@ -1,4 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { MainNav } from "./components/MainNav";
+import { Footer } from "./components/Footer";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Login from "./pages/Login";
@@ -10,15 +12,21 @@ import Waitlist from "./pages/Waitlist";
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard/*" element={<Dashboard />} />
-        <Route path="/features" element={<FeatureRequests />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/waitlist" element={<Waitlist />} />
-      </Routes>
+      <div className="min-h-screen flex flex-col">
+        <MainNav />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard/*" element={<Dashboard />} />
+            <Route path="/features" element={<FeatureRequests />} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/waitlist" element={<Waitlist />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }
