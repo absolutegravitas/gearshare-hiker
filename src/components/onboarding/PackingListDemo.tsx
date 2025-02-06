@@ -40,7 +40,18 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
 
   const handleCreateList = () => {
     if (listName) {
-      onStepComplete();
+      // Only call onStepComplete if we haven't already completed this step
+      if (currentStep === 0) {
+        onStepComplete();
+      }
+    }
+  };
+
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setListName(e.target.value);
+    // Only trigger handleCreateList if we have a value
+    if (e.target.value) {
+      handleCreateList();
     }
   };
 
@@ -94,7 +105,7 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
         <Input
           placeholder="Weekend Camping Trip"
           value={listName}
-          onChange={(e) => setListName(e.target.value)}
+          onChange={handleNameChange}
           className="bg-white/5 border-white/20 text-white placeholder:text-white/50 transition-all duration-300 focus:scale-105"
         />
         <div className="flex gap-2">
