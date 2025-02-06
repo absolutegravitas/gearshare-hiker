@@ -39,18 +39,17 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
   };
 
   const handleCreateList = () => {
-    if (listName) {
-      // Only call onStepComplete if we haven't already completed this step
-      if (currentStep === 0) {
-        onStepComplete();
-      }
+    if (listName && currentStep === 0) {
+      onStepComplete();
     }
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setListName(e.target.value);
-    // Only trigger handleCreateList if we have a value
-    if (e.target.value) {
+    const newValue = e.target.value;
+    setListName(newValue);
+    
+    // Only complete the step if this is the first time we're adding text
+    if (newValue && listName === "") {
       handleCreateList();
     }
   };
