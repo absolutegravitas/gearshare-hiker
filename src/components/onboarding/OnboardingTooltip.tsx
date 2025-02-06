@@ -1,5 +1,6 @@
-import { useFloating, useInteractions, useRole, offset, flip, shift } from "@floating-ui/react";
+import { useFloating, useInteractions, useRole, offset, flip, shift, autoUpdate } from "@floating-ui/react";
 import { Card } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface OnboardingTooltipProps {
   target: string;
@@ -9,10 +10,21 @@ interface OnboardingTooltipProps {
 }
 
 export function OnboardingTooltip({ target, title, content, open }: OnboardingTooltipProps) {
+  const isMobile = useIsMobile();
+  
   const { refs, floatingStyles, context } = useFloating({
     open,
-    placement: "right",
-    middleware: [offset(12), flip(), shift()],
+    placement: isMobile ? "bottom" : "right",
+    middleware: [
+      offset(12),
+      flip({
+        fallbackPlacements: ['top', 'bottom', 'left', 'right'],
+      }),
+      shift({
+        padding: 16,
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
   });
 
   const role = useRole(context);
@@ -27,9 +39,9 @@ export function OnboardingTooltip({ target, title, content, open }: OnboardingTo
         ref={refs.setFloating}
         style={floatingStyles}
         {...getFloatingProps()}
-        className="z-50"
+        className="z-50 max-w-[90vw] lg:max-w-md"
       >
-        <Card className="p-4 bg-white shadow-lg border-sky animate-fade-in w-64">
+        <Card className="p-4 bg-white shadow-lg border-sky animate-fade-in">
           <h3 className="font-semibold text-lg mb-2 text-forest">{title}</h3>
           <p className="text-sm text-gray-600">{content}</p>
         </Card>

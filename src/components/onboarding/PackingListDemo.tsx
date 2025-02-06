@@ -3,8 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BackpackVisualization } from "@/components/dashboard/BackpackVisualization";
-import { Plus, Download, ArrowRight } from "lucide-react";
+import { Plus, Download, ArrowRight, RefreshCw } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { useIsMobile } from "@/hooks/use-mobile";
 import jsPDF from "jspdf";
 
 interface PackingListDemoProps {
@@ -17,6 +23,8 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
   const [items, setItems] = useState<any[]>([]);
   const [listName, setListName] = useState("");
   const { toast } = useToast();
+  const isMobile = useIsMobile();
+  const [isVisualizationOpen, setIsVisualizationOpen] = useState(true);
 
   const handleAddItem = () => {
     const newItem = {
@@ -34,6 +42,15 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
     if (listName) {
       onStepComplete();
     }
+  };
+
+  const handleReset = () => {
+    setItems([]);
+    setListName("");
+    toast({
+      title: "List Reset",
+      description: "Your packing list has been cleared.",
+    });
   };
 
   const exportToPDF = () => {
@@ -71,8 +88,8 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
     });
   };
 
-  return (
-    <div className="space-y-6 animate-fade-in">
+  const MainContent = () => (
+    <div className="space-y-6">
       <div id="create-list" className="space-y-4">
         <Input
           placeholder="Weekend Camping Trip"
@@ -80,14 +97,24 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
           onChange={(e) => setListName(e.target.value)}
           className="bg-white/5 border-white/20 text-white placeholder:text-white/50 transition-all duration-300 focus:scale-105"
         />
-        <Button
-          onClick={handleCreateList}
-          disabled={!listName}
-          className="bg-sky hover:bg-sky-light text-white transition-all duration-300 hover:scale-105"
-        >
-          Create List
-          <ArrowRight className="ml-2 h-4 w-4 animate-pulse" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={handleCreateList}
+            disabled={!listName}
+            className="bg-sky hover:bg-sky-light text-white transition-all duration-300 hover:scale-105"
+          >
+            Create List
+            <ArrowRight className="ml-2 h-4 w-4 animate-pulse" />
+          </Button>
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            className="border-white/20 text-white hover:bg-white/10"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Reset
+          </Button>
+        </div>
       </div>
 
       {currentStep >= 1 && (
@@ -128,11 +155,47 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
           ))}
         </div>
       )}
+    </div>
+  );
+
+  const VisualizationPanel = () => (
+    <div className="w-full lg:w-1/2 lg:pl-6">
+      <BackpackVisualization items={items} />
+    </div>
+  );
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <div className="lg:flex lg:gap-6">
+        <div className="w-full lg:w-1/2">
+          <MainContent />
+        </div>
+        
+        {isMobile ? (
+          <Collapsible
+            open={isVisualizationOpen}
+            onOpenChange={setIsVisualizationOpen}
+            className="w-full mt-6 lg:mt-0"
+          >
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full border-white/20 text-white hover:bg-white/10"
+              >
+                {isVisualizationOpen ? "Hide" : "Show"} Pack Visualization
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-4">
+              <VisualizationPanel />
+            </CollapsibleContent>
+          </Collapsible>
+        ) : (
+          <VisualizationPanel />
+        )}
+      </div>
 
       {currentStep >= 3 && (
-        <div id="visualize" className="mt-8 space-y-6 animate-fade-in">
-          <BackpackVisualization items={items} />
-          
+        <div className="mt-12 space-y-8 animate-fade-in">
           <div className="flex justify-center">
             <Button
               onClick={exportToPDF}
@@ -140,6 +203,20 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
             >
               <Download className="h-4 w-4 mr-2 group-hover:animate-bounce" />
               Export as PDF
+            </Button>
+          </div>
+          
+          <div className="text-center space-y-4 p-6 rounded-lg bg-white/5 backdrop-blur">
+            <h3 className="text-xl font-semibold text-white">Ready to Take Your Adventure Further?</h3>
+            <p className="text-white/80">
+              Unlock premium features like custom categories, weight tracking, and collaborative lists.
+            </p>
+            <Button
+              className="bg-sky hover:bg-sky-light text-white group transition-all duration-300 hover:scale-105"
+              size="lg"
+            >
+              Start Your Free Trial
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
