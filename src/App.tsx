@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import FeatureRequests from "./pages/FeatureRequests";
 import Pricing from "./pages/Pricing";
 import Waitlist from "./pages/Waitlist";
+import Onboarding from "./pages/Onboarding";
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/features" element={<FeatureRequests />} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/waitlist" element={<Waitlist />} />
+            <Route path="/onboarding" element={<Onboarding />} />
           </Routes>
         </main>
         <Footer />
