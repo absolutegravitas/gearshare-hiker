@@ -38,19 +38,15 @@ export function PackingListDemo({ currentStep, onStepComplete, isDemoComplete }:
     onStepComplete();
   };
 
+  // Simplified input handling - only update the value
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setListName(e.target.value);
+  };
+
+  // Separate button click handler for step completion
   const handleCreateList = () => {
     if (listName && currentStep === 0) {
       onStepComplete();
-    }
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    setListName(newValue);
-    
-    // Only complete the step if this is the first time we're adding text
-    if (newValue && listName === "") {
-      handleCreateList();
     }
   };
 
